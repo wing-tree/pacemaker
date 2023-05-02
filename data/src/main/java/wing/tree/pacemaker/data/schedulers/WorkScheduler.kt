@@ -41,7 +41,7 @@ class WorkScheduler {
             .enqueueUniquePeriodicWork(
                 uniqueWorkName,
                 ExistingPeriodicWorkPolicy.KEEP,
-                periodicWorkRequest
+                periodicWorkRequest,
             )
     }
 }

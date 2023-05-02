@@ -24,7 +24,7 @@ class CreateInstancesWorker @AssistedInject constructor(
     private val loadRoutinesUseCase: LoadRoutinesUseCase,
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-       when (val result = loadRoutinesUseCase().firstOrNull()) {
+        when (val result = loadRoutinesUseCase().firstOrNull()) {
             is Complete.Success -> {
                 val calendar = Calendar.getInstance().apply {
                     add(Calendar.HOUR_OF_DAY, ONE)
