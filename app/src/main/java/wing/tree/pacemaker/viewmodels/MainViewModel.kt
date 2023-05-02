@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import wing.tree.pacemaker.data.extension.julianDay
-import wing.tree.pacemaker.data.schedulers.WorkScheduler
+import wing.tree.pacemaker.schedulers.WorkScheduler
 import wing.tree.pacemaker.domain.constant.DAYS_PER_WEEK
 import wing.tree.pacemaker.domain.constant.ONE
 import wing.tree.pacemaker.domain.constant.WEEKS_PER_MONTH
@@ -24,7 +24,6 @@ import wing.tree.pacemaker.domain.use.cases.LoadInstancesUseCase
 import wing.tree.pacemaker.domain.use.cases.core.Result
 import wing.tree.pacemaker.domain.use.cases.core.map
 import wing.tree.pacemaker.mappers.InstanceMapper
-import wing.tree.pacemaker.models.Day
 import wing.tree.pacemaker.models.Instance
 import javax.inject.Inject
 
@@ -68,7 +67,6 @@ class MainViewModel @Inject constructor(
 
         return instanceService.load(
             LoadInstancesUseCase.Parameter(
-                periodic = Routine.Periodic.DAILY,
                 startDay = startDay,
                 endDay = endDay,
             )

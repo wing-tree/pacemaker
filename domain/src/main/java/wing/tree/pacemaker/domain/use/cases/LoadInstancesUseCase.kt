@@ -15,14 +15,12 @@ class LoadInstancesUseCase @Inject constructor(
 ) : FlowUseCase<LoadInstancesUseCase.Parameter, List<Instance>>(coroutineDispatcher) {
     override fun execute(parameter: Parameter): Flow<List<Instance>> {
         return instanceRepository.load(
-            periodic = parameter.periodic,
             startDay = parameter.startDay,
             endDay = parameter.endDay,
         )
     }
 
     data class Parameter(
-        val periodic: Routine.Periodic,
         val startDay: Int,
         val endDay: Int,
     )

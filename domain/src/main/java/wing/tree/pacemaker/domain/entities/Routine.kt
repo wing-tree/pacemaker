@@ -8,8 +8,8 @@ abstract class Routine {
     abstract val description: String
     abstract val startDay: Int
     abstract val endDay: Int
-    abstract val begin: Long
-    abstract val end: Long
+    abstract val begin: Time
+    abstract val end: Time
     abstract val periodic: Periodic
 
     open val id: Long = ZERO.long

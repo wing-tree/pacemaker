@@ -24,6 +24,6 @@ interface InstanceDao {
     @Delete
     suspend fun delete(instance: Instance)
 
-    @Query("SELECT * FROM instance WHERE periodic = :periodic AND day >= :startDay AND day <= :endDay")
-    fun load(periodic: Routine.Periodic, startDay: Int, endDay: Int): Flow<List<Instance>>
+    @Query("SELECT * FROM instance WHERE day >= :startDay AND day <= :endDay")
+    fun load(startDay: Int, endDay: Int): Flow<List<Instance>>
 }

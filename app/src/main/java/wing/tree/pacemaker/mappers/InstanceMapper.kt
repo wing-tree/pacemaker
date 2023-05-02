@@ -16,7 +16,6 @@ class InstanceMapper : EntityMapper<Entity, Model> {
                 end = end,
                 day = day,
                 status = status,
-                periodic = periodic,
             )
         }
     }

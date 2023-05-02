@@ -32,9 +32,8 @@ class InstanceRepositoryImpl @Inject constructor(
         instanceDataSource.delete(instance.toModel())
     }
 
-    override fun load(periodic: Routine.Periodic, startDay: Int, endDay: Int): Flow<List<Instance>> {
+    override fun load(startDay: Int, endDay: Int): Flow<List<Instance>> {
         return instanceDataSource.load(
-            periodic = periodic,
             startDay = startDay,
             endDay = endDay,
         )

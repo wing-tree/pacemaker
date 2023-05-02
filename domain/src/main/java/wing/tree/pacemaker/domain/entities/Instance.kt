@@ -5,9 +5,8 @@ interface Instance {
     val routineId: Long
     val title: String
     val description: String
-    val begin: Long
-    val end: Long
+    val begin: Time
+    val end: Time
     val day: Int
     val status: Status
-    val periodic: Routine.Periodic
 }

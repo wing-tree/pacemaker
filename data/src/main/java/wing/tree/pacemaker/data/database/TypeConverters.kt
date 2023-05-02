@@ -2,28 +2,23 @@ package wing.tree.pacemaker.data.database
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import wing.tree.pacemaker.domain.entities.Routine
+import wing.tree.pacemaker.domain.entities.Time
 
 class TypeConverters {
     private val moshi = Moshi.Builder().build()
-    private val adapter: JsonAdapter<Routine.Periodic> = moshi.adapter(
-        Types.newParameterizedType(Routine.Periodic::class.java)
+    private val adapter: JsonAdapter<Time> = moshi.adapter(
+        Types.newParameterizedType(Time::class.java)
     )
 
     @TypeConverter
-    fun periodicToJson(periodic: Routine.Periodic): String {
-        return adapter.toJson(periodic)
+    fun timeToJson(time: Time): String {
+        return adapter.toJson(time)
     }
 
     @TypeConverter
-    fun jsonToPeriodic(json: String): Routine.Periodic? {
-        return try {
-            adapter.fromJson(json)
-        } catch (jsonDataException: JsonDataException) {
-            null
-        }
+    fun jsonToTime(json: String): Time {
+        return adapter.fromJson(json) ?: Time.none
     }
 }

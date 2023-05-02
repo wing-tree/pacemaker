@@ -9,6 +9,7 @@ import wing.tree.pacemaker.data.models.Instance
 import wing.tree.pacemaker.data.models.Routine
 
 @androidx.room.Database(entities = [Instance::class, Routine::class], version = 1, exportSchema = false)
+@androidx.room.TypeConverters(TypeConverters::class)
 abstract class Database : RoomDatabase() {
     abstract val instanceDao: InstanceDao
     abstract val routineDao: RoutineDao

@@ -3,6 +3,7 @@ package wing.tree.pacemaker.data.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import wing.tree.pacemaker.domain.entities.Routine
+import wing.tree.pacemaker.domain.entities.Time
 
 @Entity(tableName = "routine")
 data class Routine(
@@ -13,6 +14,6 @@ data class Routine(
     override val periodic: Periodic,
     override val startDay: Int,
     override val endDay: Int,
-    override val begin: Long,
-    override val end: Long,
+    override val begin: Time,
+    override val end: Time,
 ) : Routine()

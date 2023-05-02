@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import wing.tree.pacemaker.domain.entities.Routine
 import wing.tree.pacemaker.domain.entities.Status
+import wing.tree.pacemaker.domain.entities.Time
 import wing.tree.pacemaker.domain.services.InstanceService
 import wing.tree.pacemaker.domain.services.RoutineService
 import wing.tree.pacemaker.domain.use.cases.core.Result
@@ -41,7 +42,6 @@ class CreateRoutineViewModel @Inject constructor(
                     begin = routine.begin,
                     end = routine.end,
                     status = Status.Todo,
-                    periodic = routine.periodic,
                 )
 
                 instanceService.add(instance)

@@ -23,11 +23,9 @@ class InstanceDataSource(private val instanceDao: InstanceDao) {
     }
 
     fun load(
-        periodic: Routine.Periodic,
         startDay: Int,
         endDay: Int,
     ): Flow<List<Instance>> = instanceDao.load(
-        periodic = periodic,
         startDay = startDay,
         endDay = endDay,
     )

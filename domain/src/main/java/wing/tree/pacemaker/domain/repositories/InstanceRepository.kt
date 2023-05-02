@@ -9,5 +9,5 @@ interface InstanceRepository {
     suspend fun addAll(instances: List<Instance>)
     suspend fun update(instance: Instance)
     suspend fun delete(instance: Instance)
-    fun load(periodic: Routine.Periodic, startDay: Int, endDay: Int): Flow<List<Instance>>
+    fun load(startDay: Int, endDay: Int): Flow<List<Instance>>
 }
