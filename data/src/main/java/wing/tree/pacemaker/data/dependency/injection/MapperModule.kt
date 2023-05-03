@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import wing.tree.pacemaker.data.mappers.InstanceMapper
 import wing.tree.pacemaker.data.mappers.RoutineMapper
+import wing.tree.pacemaker.data.mappers.TimeMapper
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -13,13 +14,17 @@ import javax.inject.Singleton
 object MapperModule {
     @Provides
     @Singleton
-    fun providesInstanceMapper(): InstanceMapper {
-        return InstanceMapper()
+    fun providesTimeMapper() = TimeMapper()
+
+    @Provides
+    @Singleton
+    fun providesInstanceMapper(timeMapper: TimeMapper): InstanceMapper {
+        return InstanceMapper(timeMapper)
     }
 
     @Provides
     @Singleton
-    fun providesRoutineMapper(): RoutineMapper {
-        return RoutineMapper()
+    fun providesRoutineMapper(timeMapper: TimeMapper): RoutineMapper {
+        return RoutineMapper(timeMapper)
     }
 }

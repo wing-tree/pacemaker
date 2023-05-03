@@ -39,11 +39,13 @@ import kotlinx.coroutines.launch
 import wing.tree.pacemaker.data.extension.amPm
 import wing.tree.pacemaker.data.extension.date
 import wing.tree.pacemaker.data.extension.hour
+import wing.tree.pacemaker.data.extension.hourOfDay
 import wing.tree.pacemaker.data.extension.julianDay
 import wing.tree.pacemaker.data.extension.minute
 import wing.tree.pacemaker.data.extension.month
 import wing.tree.pacemaker.data.extension.year
 import wing.tree.pacemaker.extension.julianDay
+import wing.tree.pacemaker.models.Time
 import wing.tree.pacemaker.ui.states.CreateRoutineUiState
 import wing.tree.pacemaker.ui.theme.PacemakerTheme
 import wing.tree.pacemaker.viewmodels.CreateRoutineViewModel
@@ -213,9 +215,15 @@ private fun Begin(
                             clear()
                             this.hour = hour
                             this.minute = minute
-                        }.timeInMillis
+                        }
 
-                        uiState.begin.value = begin
+                        uiState.begin.value = Time(
+                            hour = begin.hour,
+                            hourOfDay = begin.hourOfDay,
+                            minute = begin.minute,
+                            amPm = begin.amPm,
+                        )
+
                         isInEditMode = false
                     },
                 ) {
@@ -227,8 +235,12 @@ private fun Begin(
 
     }
 
+    val begin = uiState.begin.value
     val calendar = Calendar.getInstance().apply {
-        timeInMillis = uiState.begin.value
+        hour = begin.hour
+        hourOfDay = begin.hourOfDay
+        minute = begin.minute
+        amPm = begin.amPm
     }
 
     Row(
@@ -238,7 +250,7 @@ private fun Begin(
             }
         },
     ) {
-        val begin = with(calendar) {
+        val string = with(calendar) {
             buildString {
                 append(hour)
                 append(":")
@@ -254,6 +266,6 @@ private fun Begin(
             }
         }
 
-        Text(text = begin)
+        Text(text = string)
     }
 }

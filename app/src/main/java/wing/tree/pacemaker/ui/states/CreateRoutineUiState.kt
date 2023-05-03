@@ -11,8 +11,8 @@ import wing.tree.pacemaker.data.extension.minute
 import wing.tree.pacemaker.domain.constant.EMPTY
 import wing.tree.pacemaker.domain.constant.ZERO
 import wing.tree.pacemaker.domain.entities.Routine.Periodic
-import wing.tree.pacemaker.domain.entities.Time
 import wing.tree.pacemaker.models.Routine
+import wing.tree.pacemaker.models.Time
 
 data class CreateRoutineUiState(
     val title: MutableState<String> = mutableStateOf(EMPTY),

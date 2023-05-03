@@ -3,7 +3,6 @@ package wing.tree.pacemaker.data.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import wing.tree.pacemaker.domain.entities.Routine
-import wing.tree.pacemaker.domain.entities.Time
 
 @Entity(tableName = "routine")
 data class Routine(

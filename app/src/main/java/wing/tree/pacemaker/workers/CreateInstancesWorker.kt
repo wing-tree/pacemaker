@@ -15,9 +15,11 @@ import wing.tree.pacemaker.data.extension.hour
 import wing.tree.pacemaker.data.extension.hourOfDay
 import wing.tree.pacemaker.data.extension.julianDay
 import wing.tree.pacemaker.data.extension.minute
-import wing.tree.pacemaker.data.models.Instance
-import wing.tree.pacemaker.domain.constant.ONE
+import wing.tree.pacemaker.domain.constant.ZERO
+import wing.tree.pacemaker.domain.entities.Instance
 import wing.tree.pacemaker.domain.entities.Status
+import wing.tree.pacemaker.domain.entities.Time
+import wing.tree.pacemaker.domain.extension.long
 import wing.tree.pacemaker.domain.use.cases.AddAllInstanceUseCase
 import wing.tree.pacemaker.domain.use.cases.LoadRoutinesUseCase
 import wing.tree.pacemaker.domain.use.cases.core.Result.Complete
@@ -43,15 +45,17 @@ class CreateInstancesWorker @AssistedInject constructor(
                     .filter {
                         calendar.julianDay in it.startDay..it.endDay
                     }.map {
-                        Instance(
-                            routineId = it.id,
-                            title = it.title,
-                            description = it.description,
-                            begin = it.begin,
-                            end = it.end,
-                            day = calendar.julianDay,
-                            status = Status.Todo,
-                        )
+                        object : Instance {
+                            override val id: Long = ZERO.long
+                            override val routineId: Long = it.id
+                            override val title: String = it.title
+                            override val description: String = it.description
+                            override val begin: Time = it.begin
+                            override val end: Time = it.end
+                            override val day: Int = calendar.julianDay
+                            override val status: Status = Status.Todo
+
+                        }
                     }
 
                 if (addAllInstanceUseCase(instances).isSuccess) {

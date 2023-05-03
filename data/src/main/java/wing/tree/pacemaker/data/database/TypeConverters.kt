@@ -3,14 +3,15 @@ package wing.tree.pacemaker.data.database
 import androidx.room.TypeConverter
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import wing.tree.pacemaker.domain.entities.Time
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import wing.tree.pacemaker.data.models.Time
 
 class TypeConverters {
-    private val moshi = Moshi.Builder().build()
-    private val adapter: JsonAdapter<Time> = moshi.adapter(
-        Types.newParameterizedType(Time::class.java)
-    )
+    private val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+
+    private val adapter: JsonAdapter<Time> = moshi.adapter(Time::class.java)
 
     @TypeConverter
     fun timeToJson(time: Time): String {
@@ -19,6 +20,6 @@ class TypeConverters {
 
     @TypeConverter
     fun jsonToTime(json: String): Time {
-        return adapter.fromJson(json) ?: Time.none
+        return adapter.fromJson(json)!!
     }
 }

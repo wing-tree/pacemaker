@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey
 import wing.tree.pacemaker.domain.constant.ZERO
 import wing.tree.pacemaker.domain.entities.Instance
 import wing.tree.pacemaker.domain.entities.Status
-import wing.tree.pacemaker.domain.entities.Time
 import wing.tree.pacemaker.domain.extension.long
 
 @Entity(tableName = "instance")

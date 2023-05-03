@@ -4,7 +4,7 @@ import wing.tree.pacemaker.data.mappers.core.EntityMapper
 import wing.tree.pacemaker.data.models.Routine as Model
 import wing.tree.pacemaker.domain.entities.Routine as Entity
 
-class RoutineMapper : EntityMapper<Entity, Model> {
+class RoutineMapper(private val timeMapper: TimeMapper) : EntityMapper<Entity, Model> {
     override fun toModel(entity: Entity): Model {
         return with(entity) {
             Model(
@@ -14,8 +14,8 @@ class RoutineMapper : EntityMapper<Entity, Model> {
                 periodic = periodic,
                 startDay = startDay,
                 endDay = endDay,
-                begin = begin,
-                end = end,
+                begin = timeMapper.toModel(begin),
+                end = timeMapper.toModel(end),
             )
         }
     }

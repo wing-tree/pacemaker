@@ -33,6 +33,8 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove">
         </provider>
+
+        <receiver android:name=".receivers.AlarmReceiver" />
     </application>
 
 </manifest>
