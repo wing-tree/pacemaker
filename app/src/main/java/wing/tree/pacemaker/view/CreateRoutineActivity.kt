@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.DatePicker
@@ -20,6 +23,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,7 +37,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,7 +56,12 @@ import wing.tree.pacemaker.data.extension.minute
 import wing.tree.pacemaker.data.extension.month
 import wing.tree.pacemaker.data.extension.second
 import wing.tree.pacemaker.data.extension.year
+import wing.tree.pacemaker.domain.constant.EMPTY
+import wing.tree.pacemaker.domain.constant.ONE
 import wing.tree.pacemaker.domain.constant.ZERO
+import wing.tree.pacemaker.domain.extension.float
+import wing.tree.pacemaker.domain.extension.intOrNull
+import wing.tree.pacemaker.domain.extension.isZero
 import wing.tree.pacemaker.extension.julianDay
 import wing.tree.pacemaker.model.Time
 import wing.tree.pacemaker.ui.states.CreateRoutineUiState
@@ -285,15 +296,13 @@ private fun Begin(
                             second = ZERO
                             millisecond = ZERO
 
-                            this.hour = hour
+                            this.hourOfDay = hour
                             this.minute = minute
                         }
 
                         uiState.begin.value = Time(
-                            hour = begin.hour,
                             hourOfDay = begin.hourOfDay,
                             minute = begin.minute,
-                            amPm = begin.amPm,
                         )
 
                         isInEditMode = false
@@ -309,10 +318,8 @@ private fun Begin(
 
     val begin = uiState.begin.value
     val calendar = Calendar.getInstance().apply {
-        hour = begin.hour
         hourOfDay = begin.hourOfDay
         minute = begin.minute
-        amPm = begin.amPm
     }
 
     Row(
@@ -374,10 +381,8 @@ private fun End(
                         }
 
                         uiState.end.value = Time(
-                            hour = end.hour,
                             hourOfDay = end.hourOfDay,
                             minute = end.minute,
-                            amPm = end.amPm,
                         )
 
                         isInEditMode = false
@@ -391,10 +396,8 @@ private fun End(
 
     val end = uiState.end.value
     val calendar = Calendar.getInstance().apply {
-        hour = end.hour
         hourOfDay = end.hourOfDay
         minute = end.minute
-        amPm = end.amPm
     }
 
     Row(
@@ -430,14 +433,78 @@ private fun Reminder(
     uiState: CreateRoutineUiState,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        Row(modifier = Modifier.fillMaxWidth()) {
+    var reminder by uiState.reminder
 
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RadioButton(
+                selected = reminder.on.not(),
+                onClick = {
+                    reminder = reminder.copy(on = false)
+                }
+            )
         }
 
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RadioButton(
+                selected = reminder.on,
+                onClick = {
+                    reminder = reminder.copy(on = true)
+                }
+            )
 
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(
+                    value = with(reminder.hoursBefore) {
+                        if (isZero) {
+                            EMPTY
+                        } else {
+                            "$this"
+                        }
+                    },
+                    onValueChange = { value ->
+                        reminder = value.intOrNull?.let {
+                            reminder.copy(hoursBefore = it.coerceAtMost(23))
+                        } ?: reminder.copy(hoursBefore = ZERO)
+                    },
+                    modifier = Modifier.weight(ONE.float),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
+
+                Text(
+                    text = "시간",
+                    modifier = Modifier.weight(ONE.float),
+                )
+
+                OutlinedTextField(
+                    value = with(reminder.minutesBefore) {
+                        if (isZero) {
+                            EMPTY
+                        } else {
+                            "$this"
+                        }
+                    },
+                    onValueChange = { value ->
+                        reminder = value.intOrNull?.let {
+                            reminder.copy(minutesBefore = it.coerceAtMost(59))
+                        } ?: reminder.copy(minutesBefore = ZERO)
+                    },
+                    modifier = Modifier.weight(ONE.float),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
+
+                Text(
+                    text = "분 전",
+                    modifier = Modifier.weight(ONE.float),
+                )
+            }
         }
     }
-
 }

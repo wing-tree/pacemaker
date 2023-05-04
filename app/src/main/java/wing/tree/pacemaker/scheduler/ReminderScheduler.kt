@@ -5,19 +5,23 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
-import wing.tree.pacemaker.data.extension.hour
+import wing.tree.pacemaker.data.extension.cloneAsCalendar
+import wing.tree.pacemaker.data.extension.date
 import wing.tree.pacemaker.data.extension.hourOfDay
 import wing.tree.pacemaker.data.extension.julianDay
 import wing.tree.pacemaker.data.extension.millisecond
 import wing.tree.pacemaker.data.extension.minute
 import wing.tree.pacemaker.data.extension.second
+import wing.tree.pacemaker.domain.constant.ONE
 import wing.tree.pacemaker.domain.constant.ZERO
 import wing.tree.pacemaker.domain.entity.Instance
+import wing.tree.pacemaker.domain.extension.int
 import wing.tree.pacemaker.receiver.AlarmReceiver
 
 class ReminderScheduler(private val context: Context) {
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
+    // 최초등록 로직 추가 필.
     fun scheduleReminder(instance: Instance) {
         /**
          * Reminder 시간과 시작 시간이 하루 차이, ex) remindAt: pm 11:00, startDay/begin: am 1:00
@@ -29,15 +33,22 @@ class ReminderScheduler(private val context: Context) {
 
         val calendar = Calendar.getInstance().apply {
             julianDay = instance.day
+            hourOfDay = instance.begin.hourOfDay
+            minute = instance.begin.minute
             second = ZERO
             millisecond = ZERO
         }
 
-        val triggerAtMillis = calendar.apply {
-            hour = instance.begin.hour
-            hourOfDay = instance.begin.hourOfDay
-            minute = instance.begin.minute
-        }.timeInMillis
+        val trigger = calendar.cloneAsCalendar().apply {
+            hourOfDay -= instance.reminder.hoursBefore
+            minute -= instance.reminder.minutesBefore
+        }
+
+        if (trigger.date < calendar.date) {
+            trigger.date += ONE
+        }
+
+        val triggerAtMillis = trigger.timeInMillis
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
@@ -54,5 +65,5 @@ class ReminderScheduler(private val context: Context) {
         alarmManager.cancel(operation)
     }
 
-    private val Instance.requestCode: Int get() = id.toInt()
+    private val Instance.requestCode: Int get() = id.int
 }

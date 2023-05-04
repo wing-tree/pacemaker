@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import wing.tree.pacemaker.data.model.Reminder
+import wing.tree.pacemaker.domain.constant.ZERO
 
 class ReminderConverters {
     private val moshi = Moshi.Builder()
@@ -20,6 +21,6 @@ class ReminderConverters {
 
     @TypeConverter
     fun jsonToReminder(json: String): Reminder {
-        return adapter.fromJson(json) ?: Reminder(0, 0, false)
+        return adapter.fromJson(json) ?: Reminder(ZERO, ZERO, false)
     }
 }

@@ -1,6 +1,7 @@
 package wing.tree.pacemaker.data.extension
 
 import android.icu.util.Calendar
+import wing.tree.pacemaker.data.function.calendarOf
 
 var Calendar.millisecond: Int
     get() = get(Calendar.MILLISECOND)
@@ -61,3 +62,11 @@ var Calendar.year: Int
     set(value) {
         set(Calendar.YEAR, value)
     }
+
+fun Calendar.cloneAsCalendar(): Calendar = with(clone()) {
+    if (this is Calendar) {
+        this
+    } else {
+        calendarOf(timeInMillis)
+    }
+}

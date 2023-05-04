@@ -21,17 +21,15 @@ data class CreateRoutineUiState(
     val endDay: MutableState<Int> = mutableStateOf(Int.MAX_VALUE),
     val begin: MutableState<Time> = mutableStateOf(Time.none),
     val end: MutableState<Time> = mutableStateOf(Time.none),
-    val reminder: MutableState<Reminder> = mutableStateOf(Reminder(0, 0, false))
+    val reminder: MutableState<Reminder> = mutableStateOf(Reminder(ZERO, ZERO, false))
 ) {
     init {
         val calendar = Calendar.getInstance()
 
         startDay.value = calendar.julianDay
         begin.value = Time(
-            hour = calendar.hour,
             hourOfDay = calendar.hourOfDay,
             minute = calendar.minute,
-            amPm = calendar.amPm,
         )
     }
 
