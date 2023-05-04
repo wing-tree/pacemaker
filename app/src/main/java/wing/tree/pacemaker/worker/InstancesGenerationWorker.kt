@@ -39,7 +39,6 @@ class InstancesGenerationWorker @AssistedInject constructor(
                 val now = Calendar.getInstance()
                 val dueDate = Calendar.getInstance().apply {
                     hourOfDay = ZERO
-                    hour = ZERO
                     minute = ZERO
                     second = ZERO
                     millisecond = ZERO

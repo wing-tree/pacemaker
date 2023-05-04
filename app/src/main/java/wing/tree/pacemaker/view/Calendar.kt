@@ -2,6 +2,7 @@ package wing.tree.pacemaker.view
 
 import android.icu.util.Calendar
 import android.text.TextPaint
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
@@ -188,6 +189,19 @@ private fun Day(
     instances: ImmutableList<Instance>,
     modifier: Modifier = Modifier,
 ) {
+    val completionRate = with(instances) {
+        count {
+            it.status == Status.Done
+        }.div(count().float)
+    }
+
+    val startAngle = 150F
+    val sweepAngle = 240F
+
+    val completeSweepAngle by animateFloatAsState(
+        targetValue = sweepAngle.times(completionRate)
+    )
+
     Canvas(
         modifier = modifier
             .aspectRatio(THREE_QUARTERS)
@@ -213,15 +227,6 @@ private fun Day(
         )
 
         if (instances.isNotEmpty()) {
-            val completionRate = with(instances) {
-                count {
-                    it.status == Status.Done
-                }.div(count().float)
-            }
-
-            val startAngle = 150F
-            val sweepAngle = 240F
-
             drawArc(
                 size = Size(72f, 72f),
                 color = Color.Gray,
@@ -242,7 +247,7 @@ private fun Day(
                 size = Size(72f, 72f),
                 color = Color.Red,
                 startAngle = startAngle,
-                sweepAngle = sweepAngle.times(completionRate),
+                sweepAngle = completeSweepAngle,
                 useCenter = false,
                 style = Stroke(
                     width = 6f,
