@@ -10,9 +10,9 @@ data class Routine(
     override val id: Long,
     override val title: String,
     override val description: String,
-    override val periodic: Periodic,
     override val startDay: Int,
     override val endDay: Int,
     override val begin: Time,
     override val end: Time,
+    override val reminder: Reminder,
 ) : Routine()

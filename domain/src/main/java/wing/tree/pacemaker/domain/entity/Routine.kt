@@ -10,13 +10,7 @@ abstract class Routine {
     abstract val endDay: Int
     abstract val begin: Time
     abstract val end: Time
-    abstract val periodic: Periodic
+    abstract val reminder: Reminder
 
     open val id: Long = ZERO.long
-
-    enum class Periodic {
-        DAILY,
-        WEEKLY,
-        MONTHLY,
-    }
 }

@@ -10,7 +10,7 @@ import wing.tree.pacemaker.data.extension.julianDay
 import wing.tree.pacemaker.data.extension.minute
 import wing.tree.pacemaker.domain.constant.EMPTY
 import wing.tree.pacemaker.domain.constant.ZERO
-import wing.tree.pacemaker.domain.entity.Routine.Periodic
+import wing.tree.pacemaker.model.Reminder
 import wing.tree.pacemaker.model.Routine
 import wing.tree.pacemaker.model.Time
 
@@ -21,6 +21,7 @@ data class CreateRoutineUiState(
     val endDay: MutableState<Int> = mutableStateOf(Int.MAX_VALUE),
     val begin: MutableState<Time> = mutableStateOf(Time.none),
     val end: MutableState<Time> = mutableStateOf(Time.none),
+    val reminder: MutableState<Reminder> = mutableStateOf(Reminder(0, 0, false))
 ) {
     init {
         val calendar = Calendar.getInstance()
@@ -34,15 +35,13 @@ data class CreateRoutineUiState(
         )
     }
 
-    fun toRoutine(
-        periodic: Periodic,
-    ) = Routine(
+    fun toRoutine() = Routine(
         title = title.value,
         description = description.value,
         startDay = startDay.value,
         endDay = endDay.value,
         begin = begin.value,
         end = end.value,
-        periodic = periodic
+        reminder = reminder.value,
     )
 }

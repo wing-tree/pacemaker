@@ -8,5 +8,6 @@ interface Instance {
     val begin: Time
     val end: Time
     val day: Int
+    val reminder: Reminder
     val status: Status
 }

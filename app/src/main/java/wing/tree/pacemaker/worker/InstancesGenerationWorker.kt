@@ -16,6 +16,7 @@ import wing.tree.pacemaker.data.extension.minute
 import wing.tree.pacemaker.data.extension.second
 import wing.tree.pacemaker.domain.constant.ZERO
 import wing.tree.pacemaker.domain.entity.Instance
+import wing.tree.pacemaker.domain.entity.Reminder
 import wing.tree.pacemaker.domain.entity.Status
 import wing.tree.pacemaker.domain.entity.Time
 import wing.tree.pacemaker.domain.extension.long
@@ -63,6 +64,7 @@ class InstancesGenerationWorker @AssistedInject constructor(
                             override val end: Time = it.end
                             override val day: Int = dueDate.julianDay
                             override val status: Status = Status.Todo
+                            override val reminder: Reminder = it.reminder
                         }
                     }
 

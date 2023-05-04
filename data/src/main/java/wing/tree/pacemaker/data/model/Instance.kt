@@ -18,4 +18,5 @@ data class Instance(
     override val end: Time,
     override val day: Int,
     override val status: Status,
+    override val reminder: Reminder,
 ) : Instance

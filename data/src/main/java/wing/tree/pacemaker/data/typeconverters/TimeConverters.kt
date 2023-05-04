@@ -1,4 +1,4 @@
-package wing.tree.pacemaker.data.database
+package wing.tree.pacemaker.data.typeconverters
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.JsonAdapter
@@ -6,7 +6,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import wing.tree.pacemaker.data.model.Time
 
-class TypeConverters {
+class TimeConverters {
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()

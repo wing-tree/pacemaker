@@ -7,9 +7,11 @@ import wing.tree.pacemaker.data.dao.InstanceDao
 import wing.tree.pacemaker.data.dao.RoutineDao
 import wing.tree.pacemaker.data.model.Instance
 import wing.tree.pacemaker.data.model.Routine
+import wing.tree.pacemaker.data.typeconverters.ReminderConverters
+import wing.tree.pacemaker.data.typeconverters.TimeConverters
 
 @androidx.room.Database(entities = [Instance::class, Routine::class], version = 1, exportSchema = false)
-@androidx.room.TypeConverters(TypeConverters::class)
+@androidx.room.TypeConverters(ReminderConverters::class, TimeConverters::class)
 abstract class Database : RoomDatabase() {
     abstract val instanceDao: InstanceDao
     abstract val routineDao: RoutineDao

@@ -27,7 +27,7 @@ class CreateRoutineViewModel @Inject constructor(
 
     suspend fun create() {
         withContext(ioDispatcher) {
-            val routine = uiState.value.toRoutine(Routine.Periodic.DAILY)
+            val routine = uiState.value.toRoutine()
             val result = routineService.add(routine)
 
             if (result is Result.Complete.Success) {
@@ -41,6 +41,7 @@ class CreateRoutineViewModel @Inject constructor(
                     begin = routine.begin,
                     end = routine.end,
                     status = Status.Todo,
+                    reminder = routine.reminder,
                 )
 
                 instanceService.add(instance)
