@@ -2,6 +2,12 @@ package wing.tree.pacemaker.data.extension
 
 import android.icu.util.Calendar
 
+var Calendar.millisecond: Int
+    get() = get(Calendar.MILLISECOND)
+    set(value) {
+        set(Calendar.MILLISECOND, value)
+    }
+
 var Calendar.amPm: Int
     get() = get(Calendar.AM_PM)
     set(value) {
@@ -30,6 +36,12 @@ var Calendar.date: Int
     get() = get(Calendar.DATE)
     set(value) {
         set(Calendar.DATE, value)
+    }
+
+var Calendar.second: Int
+    get() = get(Calendar.SECOND)
+    set(value) {
+        set(Calendar.SECOND, value)
     }
 
 var Calendar.julianDay: Int

@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import wing.tree.pacemaker.data.models.Routine
+import wing.tree.pacemaker.data.model.Routine
 
 @Dao
 interface RoutineDao {

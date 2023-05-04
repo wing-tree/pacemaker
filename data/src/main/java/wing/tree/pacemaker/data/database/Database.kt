@@ -5,8 +5,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import wing.tree.pacemaker.data.dao.InstanceDao
 import wing.tree.pacemaker.data.dao.RoutineDao
-import wing.tree.pacemaker.data.models.Instance
-import wing.tree.pacemaker.data.models.Routine
+import wing.tree.pacemaker.data.model.Instance
+import wing.tree.pacemaker.data.model.Routine
 
 @androidx.room.Database(entities = [Instance::class, Routine::class], version = 1, exportSchema = false)
 @androidx.room.TypeConverters(TypeConverters::class)
