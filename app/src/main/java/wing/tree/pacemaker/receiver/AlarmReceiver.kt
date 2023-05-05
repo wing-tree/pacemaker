@@ -42,6 +42,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         notificationChannel.setShowBadge(false)
         notificationManager.createNotificationChannel(notificationChannel)
+        notificationManager.cancel(notificationId)
 
         val pendingIntent = PendingIntent.getActivity(
             context,

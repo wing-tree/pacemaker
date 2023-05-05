@@ -67,7 +67,7 @@ class InstancesGenerationWorker @AssistedInject constructor(
 
                 if (addAllInstanceUseCase(instances).isSuccess) {
                     instances.forEach { instance ->
-                        reminderScheduler.scheduleReminder(instance)
+                        reminderScheduler.scheduleReminder(instance, false)
                     }
                 }
             }

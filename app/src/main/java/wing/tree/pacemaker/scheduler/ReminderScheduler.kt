@@ -21,8 +21,9 @@ import wing.tree.pacemaker.receiver.AlarmReceiver
 class ReminderScheduler(private val context: Context) {
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
-    // 최초등록 로직 추가 필.
-    fun scheduleReminder(instance: Instance) {
+    // TODO 최초등록 로직 추가 필.
+    // 더 좋은 방식 있을지도?
+    fun scheduleReminder(instance: Instance, isInitialScheduling: Boolean) {
         /**
          * Reminder 시간과 시작 시간이 하루 차이, ex) remindAt: pm 11:00, startDay/begin: am 1:00
          * 인 경우, 리마인더 시간 + 24를 한다. 최초 등록 시점에서는 입력된 시간에 바로 리마인더 설정하면되고, 이미 지난 시간이면 무시하면 됨.
@@ -51,7 +52,8 @@ class ReminderScheduler(private val context: Context) {
             minute -= instance.reminder.minutesBefore
         }
 
-        if (trigger.date < calendar.date) {
+        // TODO 최초 등록 시 무시해야함.
+        if (isInitialScheduling.not() && trigger.date < calendar.date) {
             trigger.date += ONE
         }
 

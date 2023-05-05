@@ -6,18 +6,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
-import wing.tree.pacemaker.domain.entity.Routine
 import wing.tree.pacemaker.domain.entity.Status
 import wing.tree.pacemaker.domain.service.InstanceService
 import wing.tree.pacemaker.domain.service.RoutineService
 import wing.tree.pacemaker.domain.usecase.core.Result
 import wing.tree.pacemaker.model.Instance
+import wing.tree.pacemaker.scheduler.ReminderScheduler
 import wing.tree.pacemaker.ui.states.CreateRoutineUiState
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateRoutineViewModel @Inject constructor(
     private val instanceService: InstanceService,
+    private val reminderScheduler: ReminderScheduler,
     private val routineService: RoutineService,
 ) : ViewModel() {
     private val ioDispatcher = Dispatchers.IO
@@ -45,6 +46,7 @@ class CreateRoutineViewModel @Inject constructor(
                 )
 
                 instanceService.add(instance)
+                reminderScheduler.scheduleReminder(instance, true)
             }
         }
     }
