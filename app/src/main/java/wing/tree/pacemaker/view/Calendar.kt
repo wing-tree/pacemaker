@@ -1,5 +1,6 @@
 package wing.tree.pacemaker.view
 
+import android.icu.text.DateFormatSymbols
 import android.icu.util.Calendar
 import android.text.TextPaint
 import androidx.compose.animation.core.animateFloatAsState
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +25,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
@@ -31,12 +34,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import wing.tree.pacemaker.data.extension.amPm
+import wing.tree.pacemaker.data.extension.hour
+import wing.tree.pacemaker.data.extension.minute
 import wing.tree.pacemaker.data.extension.month
 import wing.tree.pacemaker.data.extension.year
 import wing.tree.pacemaker.domain.constant.ONE
@@ -49,9 +56,11 @@ import wing.tree.pacemaker.domain.usecase.core.getOrNull
 import wing.tree.pacemaker.model.Day
 import wing.tree.pacemaker.model.Instance
 import wing.tree.pacemaker.model.Month
+import wing.tree.pacemaker.model.Time
 import wing.tree.pacemaker.model.Week
 import wing.tree.pacemaker.ui.theme.Typography
 import wing.tree.pacemaker.viewmodel.MainViewModel
+import java.util.Locale
 
 fun <T> emptyImmutableList() = listOf<T>().toImmutableList()
 
@@ -69,17 +78,12 @@ fun Calendar(
         add(Calendar.MONTH, currentPage.minus(initialPage))
     }
 
-    val year = calendar.year
-    val month = calendar.month
-
     val selectedDay by viewModel.selectedDay.collectAsStateWithLifecycle()
-    val instances by viewModel.loadInstances(
-        year = year,
-        month = month,
-    ).collectAsStateWithLifecycle(initialValue = null)
+    // TODO State 처리.
 
     Column(modifier = modifier) {
         Text(text = "${calendar[Calendar.YEAR]} ${calendar[Calendar.MONTH].inc()}")
+        Weekdays(modifier = Modifier.fillMaxWidth())
 
         HorizontalPager(
             pageCount = pageCount,
@@ -88,33 +92,40 @@ fun Calendar(
             with(Calendar.getInstance()) {
                 add(Calendar.MONTH, page.minus(initialPage))
 
-                Month(
-                    month = Month(
-                        month = get(Calendar.MONTH),
-                        year = get(Calendar.YEAR),
-                    ),
-                    selectedDay = selectedDay,
-                    onDaySelected = {
-                        viewModel.onDaySelected(it)
-                    },
-                    instances = instances?.getOrNull() ?: emptyImmutableList(),
-                    modifier = Modifier.wrapContentHeight(),
-                )
-            }
-        }
+                val instances by viewModel.loadInstances(
+                    year = year,
+                    month = month,
+                ).collectAsStateWithLifecycle(initialValue = null)
 
-        when (val result = instances) {
-            is Result.Complete.Success -> Instances(
-                instances = result.data,
-                selectedDay = selectedDay,
-                onStatusClick = {
-                    viewModel.updateStatus(it)
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Month(
+                        month = Month(
+                            month = get(Calendar.MONTH),
+                            year = get(Calendar.YEAR),
+                        ),
+                        selectedDay = selectedDay,
+                        onDaySelected = {
+                            viewModel.onDaySelected(it)
+                        },
+                        instances = instances?.getOrNull() ?: emptyImmutableList(),
+                        modifier = Modifier.wrapContentHeight(),
+                    )
 
-            else -> {
+                    when (val result = instances) {
+                        is Result.Complete.Success -> Instances(
+                            instances = result.data,
+                            selectedDay = selectedDay,
+                            onStatusClick = {
+                                viewModel.updateStatus(it)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
+                        else -> {
+
+                        }
+                    }
+                }
             }
         }
     }
@@ -137,6 +148,26 @@ fun Month(
                 onDaySelected = onDaySelected,
                 instances = instances,
                 modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun Weekdays(modifier: Modifier = Modifier) {
+    val shortWeekdays = DateFormatSymbols().shortWeekdays
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        shortWeekdays
+            .filterNot { it.isBlank() }
+            .forEach { shortWeekday ->
+            Text(
+                text = shortWeekday,
+                modifier = Modifier.weight(ONE.float),
+                textAlign = TextAlign.Center,
             )
         }
     }
@@ -297,18 +328,30 @@ private fun Instance(
         modifier = modifier,
     ) {
         with(instance) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.weight(ONE.float)) {
-                    Text(
-                        text = title,
-                        style = Typography.bodyLarge,
-                    )
-                    Text(
-                        text = description,
-                        style = Typography.bodyMedium,
-                    )
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = title,
+                    modifier = Modifier.weight(ONE.float),
+                    maxLines = ONE,
+                    style = Typography.bodyLarge,
+                )
 
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Time(begin)
+                    Text("~")
+                    Time(end)
+                }
+            }
+
+            Text(
+                text = description,
+                style = Typography.bodyMedium,
+            )
+
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     onClick = {
                         onStatusClick(instance)
@@ -319,4 +362,20 @@ private fun Instance(
             }
         }
     }
+}
+
+@Composable
+private fun Time(time: Time) {
+    val calendar = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, time.hourOfDay)
+        set(Calendar.MINUTE, time.minute)
+    }
+
+    val amPmString = DateFormatSymbols().amPmStrings[calendar.amPm]
+    val hour = calendar.hour.let { if (it == 0) 12 else it }
+    val minute = calendar.minute
+
+    val text = String.format(Locale.getDefault(), "%s %02d:%02d", amPmString, hour, minute)
+
+    Text(text = text)
 }
