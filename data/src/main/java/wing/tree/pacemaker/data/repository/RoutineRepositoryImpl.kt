@@ -7,7 +7,7 @@ import wing.tree.pacemaker.domain.entity.Routine
 import wing.tree.pacemaker.domain.repository.RoutineRepository
 import javax.inject.Inject
 
-class RoutineRepositoryImpl @Inject constructor(
+internal class RoutineRepositoryImpl @Inject constructor(
     private val routineDataSource: RoutineDataSource,
     private val routineMapper: RoutineMapper,
 ) : RoutineRepository {

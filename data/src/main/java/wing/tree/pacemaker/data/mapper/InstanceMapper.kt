@@ -4,7 +4,7 @@ import wing.tree.pacemaker.data.mapper.core.EntityMapper
 import wing.tree.pacemaker.data.model.Instance as Model
 import wing.tree.pacemaker.domain.entity.Instance as Entity
 
-class InstanceMapper(
+internal class InstanceMapper(
     private val reminderMapper: ReminderMapper,
     private val timeMapper: TimeMapper,
 ) : EntityMapper<Entity, Model> {

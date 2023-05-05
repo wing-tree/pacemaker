@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object MapperModule {
+internal object MapperModule {
     @Provides
     @Singleton
     fun providesReminderMapper() = ReminderMapper()

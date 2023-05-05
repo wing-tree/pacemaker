@@ -7,7 +7,7 @@ import wing.tree.pacemaker.domain.entity.Instance
 import wing.tree.pacemaker.domain.repository.InstanceRepository
 import javax.inject.Inject
 
-class InstanceRepositoryImpl @Inject constructor(
+internal class InstanceRepositoryImpl @Inject constructor(
     private val instanceDataSource: InstanceDataSource,
     private val instanceMapper: InstanceMapper,
 ) : InstanceRepository {

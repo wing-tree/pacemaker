@@ -1,24 +1,22 @@
 package wing.tree.pacemaker.mapper
 
 import wing.tree.pacemaker.data.mapper.core.EntityMapper
-import wing.tree.pacemaker.model.Instance as Model
-import wing.tree.pacemaker.domain.entity.Instance as Entity
+import wing.tree.pacemaker.model.Routine as Model
+import wing.tree.pacemaker.domain.entity.Routine as Entity
 
-class InstanceMapper(
+class RoutineMapper(
     private val reminderMapper: ReminderMapper,
     private val timeMapper: TimeMapper,
 ) : EntityMapper<Entity, Model> {
     override fun toModel(entity: Entity): Model {
         return with(entity) {
             Model(
-                id = id,
-                routineId = routineId,
                 title = title,
                 description = description,
+                startDay = startDay,
+                endDay = endDay,
                 begin = timeMapper.toModel(begin),
                 end = timeMapper.toModel(end),
-                day = day,
-                status = status,
                 reminder = reminderMapper.toModel(reminder),
             )
         }

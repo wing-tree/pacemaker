@@ -1,7 +1,6 @@
 package wing.tree.pacemaker.model
 
 import wing.tree.pacemaker.domain.entity.Routine
-import wing.tree.pacemaker.domain.entity.Time
 
 data class Routine(
     override val title: String,
