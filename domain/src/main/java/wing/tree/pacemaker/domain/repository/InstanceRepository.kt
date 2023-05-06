@@ -9,4 +9,6 @@ interface InstanceRepository {
     suspend fun update(instance: Instance)
     suspend fun delete(instance: Instance)
     fun load(startDay: Int, endDay: Int): Flow<List<Instance>>
+    fun loadCompleteRate(): Flow<Float>
+    fun loadCompleteRate(startDay: Int, endDay: Int): Flow<Float>
 }

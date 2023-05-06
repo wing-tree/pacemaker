@@ -31,6 +31,11 @@ data class CreateRoutineUiState(
             hourOfDay = calendar.hourOfDay,
             minute = calendar.minute,
         )
+
+        end.value = Time(
+            hourOfDay = calendar.hourOfDay.inc(),
+            minute = calendar.minute,
+        )
     }
 
     fun toRoutine() = Routine(

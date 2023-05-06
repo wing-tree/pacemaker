@@ -8,12 +8,16 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -34,6 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,6 +59,7 @@ import wing.tree.pacemaker.domain.extension.float
 import wing.tree.pacemaker.domain.extension.half
 import wing.tree.pacemaker.domain.usecase.core.Result
 import wing.tree.pacemaker.domain.usecase.core.getOrNull
+import wing.tree.pacemaker.model.CompleteRate
 import wing.tree.pacemaker.model.Day
 import wing.tree.pacemaker.model.Instance
 import wing.tree.pacemaker.model.Month
@@ -78,10 +85,38 @@ fun Calendar(
         add(Calendar.MONTH, currentPage.minus(initialPage))
     }
 
+    val year = calendar.year
+    val month = calendar.month
+
     val selectedDay by viewModel.selectedDay.collectAsStateWithLifecycle()
     // TODO State 처리.
 
-    Column(modifier = modifier) {
+    val instances by viewModel.loadInstances(
+        year = year,
+        month = month,
+    ).collectAsStateWithLifecycle(initialValue = null)
+
+    val completeRate by viewModel.loadCompleteRate(
+        year = year,
+        month = month,
+    ).collectAsStateWithLifecycle(initialValue = null)
+
+    Column(
+        modifier = modifier.pointerInput(Unit) {
+            detectVerticalDragGestures { change, dragAmount ->
+                change.consume()
+            }
+        },
+    ) {
+        completeRate?.let {
+            CompleteRate(
+                completeRate = it,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(72.dp),
+            )
+        }
+
         Text(text = "${calendar[Calendar.YEAR]} ${calendar[Calendar.MONTH].inc()}")
         Weekdays(modifier = Modifier.fillMaxWidth())
 
@@ -92,40 +127,115 @@ fun Calendar(
             with(Calendar.getInstance()) {
                 add(Calendar.MONTH, page.minus(initialPage))
 
-                val instances by viewModel.loadInstances(
-                    year = year,
-                    month = month,
-                ).collectAsStateWithLifecycle(initialValue = null)
+                Month(
+                    month = Month(
+                        month = get(Calendar.MONTH),
+                        year = get(Calendar.YEAR),
+                    ),
+                    selectedDay = selectedDay,
+                    onDaySelected = {
+                        viewModel.onDaySelected(it)
+                    },
+                    instances = instances?.getOrNull() ?: emptyImmutableList(),
+                    modifier = Modifier.wrapContentHeight(),
+                )
+            }
+        }
 
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Month(
-                        month = Month(
-                            month = get(Calendar.MONTH),
-                            year = get(Calendar.YEAR),
-                        ),
-                        selectedDay = selectedDay,
-                        onDaySelected = {
-                            viewModel.onDaySelected(it)
-                        },
-                        instances = instances?.getOrNull() ?: emptyImmutableList(),
-                        modifier = Modifier.wrapContentHeight(),
-                    )
+        when (val result = instances) {
+            is Result.Complete.Success -> Instances(
+                instances = result.data,
+                selectedDay = selectedDay,
+                onStatusClick = {
+                    viewModel.updateStatus(it)
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
 
-                    when (val result = instances) {
-                        is Result.Complete.Success -> Instances(
-                            instances = result.data,
-                            selectedDay = selectedDay,
-                            onStatusClick = {
-                                viewModel.updateStatus(it)
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+            else -> {
 
-                        else -> {
+            }
+        }
+    }
+}
 
-                        }
-                    }
-                }
+@Composable
+fun CompleteRate(
+    completeRate: CompleteRate,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier) {
+        Box(modifier = Modifier.weight(ONE.float)) {
+            val startAngle = 150F
+            val sweepAngle = 240F
+
+            val completeSweepAngle by animateFloatAsState(
+                targetValue = sweepAngle.times(completeRate.overall)
+            )
+
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawArc(
+                    size = Size(size.height, size.height),
+                    color = Color.Gray,
+                    startAngle = startAngle,
+                    sweepAngle = 240f,
+                    useCenter = false,
+                    topLeft = Offset((size.width - size.height).half, 0f),
+                    style = Stroke(
+                        width = 12f,
+                        cap = StrokeCap.Round,
+                    ),
+                )
+
+                drawArc(
+                    size = Size(size.height, size.height),
+                    color = Color.Red,
+                    startAngle = startAngle,
+                    sweepAngle = completeSweepAngle,
+                    useCenter = false,
+                    topLeft = Offset((size.width - size.height).half, 0f),
+                    style = Stroke(
+                        width = 12f,
+                        cap = StrokeCap.Round,
+                    ),
+                )
+            }
+        }
+
+        Box(modifier = Modifier.weight(ONE.float)) {
+            val startAngle = 150F
+            val sweepAngle = 240F
+
+            val completeSweepAngle by animateFloatAsState(
+                targetValue = sweepAngle.times(completeRate.dateRange)
+            )
+
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawArc(
+                    color = Color.Gray,
+                    startAngle = startAngle,
+                    sweepAngle = 240f,
+                    useCenter = false,
+                    size = Size(size.height, size.height),
+                    topLeft = Offset((size.width - size.height).half, 0f),
+                    style = Stroke(
+                        width = 12f,
+                        cap = StrokeCap.Round,
+                    ),
+                )
+
+                drawArc(
+                    size = Size(size.height, size.height),
+                    color = Color.Red,
+                    startAngle = startAngle,
+                    sweepAngle = completeSweepAngle,
+                    useCenter = false,
+                    topLeft = Offset((size.width - size.height).half, 0f),
+                    style = Stroke(
+                        width = 12f,
+                        cap = StrokeCap.Round,
+                    ),
+                )
             }
         }
     }

@@ -10,19 +10,31 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import wing.tree.pacemaker.data.extension.date
 import wing.tree.pacemaker.data.extension.julianDay
+import wing.tree.pacemaker.data.extension.month
+import wing.tree.pacemaker.data.extension.year
 import wing.tree.pacemaker.scheduler.WorkScheduler
 import wing.tree.pacemaker.domain.constant.DAYS_PER_WEEK
 import wing.tree.pacemaker.domain.constant.ONE
 import wing.tree.pacemaker.domain.constant.WEEKS_PER_MONTH
+import wing.tree.pacemaker.domain.constant.ZERO
+import wing.tree.pacemaker.domain.entity.TimePeriod
+import wing.tree.pacemaker.domain.extension.float
 import wing.tree.pacemaker.domain.service.InstanceService
+import wing.tree.pacemaker.domain.usecase.LoadCompleteRateUseCase
 import wing.tree.pacemaker.domain.usecase.LoadInstancesUseCase
 import wing.tree.pacemaker.domain.usecase.core.Result
+import wing.tree.pacemaker.domain.usecase.core.getOrDefault
 import wing.tree.pacemaker.domain.usecase.core.map
 import wing.tree.pacemaker.mapper.InstanceMapper
+import wing.tree.pacemaker.model.CompleteRate
 import wing.tree.pacemaker.model.Instance
 import javax.inject.Inject
 
@@ -33,6 +45,7 @@ class MainViewModel @Inject constructor(
     application: Application,
     private val instanceMapper: InstanceMapper,
     private val instanceService: InstanceService,
+    private val loadCompleteRateUseCase: LoadCompleteRateUseCase,
     private val workScheduler: WorkScheduler,
 ) : AndroidViewModel(application) {
     private val ioDispatcher = Dispatchers.IO
@@ -42,6 +55,33 @@ class MainViewModel @Inject constructor(
     fun onDaySelected(day: Int) {
         selectedDay.update {
             day
+        }
+    }
+
+    // TODO uistate 병합.
+    fun loadCompleteRate(year: Int, month: Int): Flow<CompleteRate> {
+        val calendar = Calendar.getInstance().apply {
+            this.year = year
+            this.month = month
+        }
+
+        val startDay = calendar.apply {
+            this.date = getActualMinimum(Calendar.DATE)
+        }.julianDay
+
+        val endDay = calendar.apply {
+            this.date = getActualMaximum(Calendar.DATE)
+        }.julianDay
+
+        return with(loadCompleteRateUseCase) {
+            invoke(TimePeriod.Overall).combine(
+                invoke(TimePeriod.DateRange(startDay, endDay)),
+            ) { overall, dateRange ->
+                CompleteRate(
+                    dateRange = dateRange.getOrDefault(ZERO.float),
+                    overall = overall.getOrDefault(ZERO.float),
+                )
+            }
         }
     }
 

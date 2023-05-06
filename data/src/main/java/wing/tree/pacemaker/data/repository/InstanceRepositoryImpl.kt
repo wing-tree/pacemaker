@@ -38,5 +38,13 @@ internal class InstanceRepositoryImpl @Inject constructor(
         )
     }
 
+    override fun loadCompleteRate(): Flow<Float> {
+        return instanceDataSource.loadCompleteRate()
+    }
+
+    override fun loadCompleteRate(startDay: Int, endDay: Int): Flow<Float> {
+        return instanceDataSource.loadCompleteRate(startDay, endDay)
+    }
+
     private fun Instance.toModel() = instanceMapper.toModel(this)
 }

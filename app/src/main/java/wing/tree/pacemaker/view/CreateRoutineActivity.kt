@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -427,7 +428,6 @@ private fun End(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Reminder(
     uiState: CreateRoutineUiState,
@@ -481,6 +481,7 @@ private fun Reminder(
                 Text(
                     text = "시간",
                     modifier = Modifier.weight(ONE.float),
+                    textAlign = TextAlign.Center,
                 )
 
                 OutlinedTextField(
@@ -503,6 +504,7 @@ private fun Reminder(
                 Text(
                     text = "분 전",
                     modifier = Modifier.weight(ONE.float),
+                    textAlign = TextAlign.Center,
                 )
             }
         }
