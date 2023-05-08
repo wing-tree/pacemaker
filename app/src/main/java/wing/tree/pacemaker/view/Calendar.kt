@@ -575,7 +575,10 @@ private fun Time(time: Time) {
     }
 
     val amPmString = DateFormatSymbols().amPmStrings[calendar.amPm]
-    val hour = calendar.hour.ifZero { 12 }
+    val hour = calendar.hour.ifZero {
+        12
+    }
+
     val minute = calendar.minute
 
     val text = String.format(Locale.getDefault(), "%s %02d:%02d", amPmString, hour, minute)
