@@ -19,6 +19,7 @@ import kotlinx.coroutines.runBlocking
 import wing.tree.pacemaker.data.extension.date
 import wing.tree.pacemaker.data.extension.julianDay
 import wing.tree.pacemaker.data.extension.month
+import wing.tree.pacemaker.data.extension.weekOfMonth
 import wing.tree.pacemaker.data.extension.year
 import wing.tree.pacemaker.scheduler.WorkScheduler
 import wing.tree.pacemaker.domain.constant.DAYS_PER_WEEK
@@ -35,10 +36,11 @@ import wing.tree.pacemaker.domain.usecase.core.getOrDefault
 import wing.tree.pacemaker.domain.usecase.core.map
 import wing.tree.pacemaker.mapper.InstanceMapper
 import wing.tree.pacemaker.model.CompleteRate
+import wing.tree.pacemaker.model.Day
 import wing.tree.pacemaker.model.Instance
 import javax.inject.Inject
 
-private val today: Int get() = Calendar.getInstance().julianDay
+private val today: Calendar get() = Calendar.getInstance()
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -50,11 +52,16 @@ class MainViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
     private val ioDispatcher = Dispatchers.IO
 
-    val selectedDay = MutableStateFlow(today)
+    val selectedDay = MutableStateFlow(today.julianDay)
+    val selectedWeekOfMonth = MutableStateFlow(today.weekOfMonth)
 
-    fun onDaySelected(day: Int) {
+    fun onDaySelected(day: Day) {
         selectedDay.update {
-            day
+            day.julianDay
+        }
+
+        selectedWeekOfMonth.update {
+            day.weekOfMonth
         }
     }
 

@@ -25,6 +25,7 @@ data class Week(
                 dayOfMonth = get(Calendar.DAY_OF_MONTH),
                 dayOfWeek = get(Calendar.DAY_OF_WEEK),
                 julianDay = get(Calendar.JULIAN_DAY),
+                weekOfMonth = get(Calendar.WEEK_OF_MONTH),
                 month = get(Calendar.MONTH),
             )
 

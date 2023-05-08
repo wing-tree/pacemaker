@@ -1,10 +1,8 @@
-package wing.tree.pacemaker.ui.states
+package wing.tree.pacemaker.ui.state
 
 import android.icu.util.Calendar
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import wing.tree.pacemaker.data.extension.amPm
-import wing.tree.pacemaker.data.extension.hour
 import wing.tree.pacemaker.data.extension.hourOfDay
 import wing.tree.pacemaker.data.extension.julianDay
 import wing.tree.pacemaker.data.extension.minute

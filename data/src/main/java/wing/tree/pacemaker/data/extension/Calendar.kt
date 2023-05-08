@@ -51,6 +51,12 @@ var Calendar.julianDay: Int
         set(Calendar.JULIAN_DAY, value)
     }
 
+var Calendar.weekOfMonth: Int
+    get() = get(Calendar.WEEK_OF_MONTH)
+    set(value) {
+        set(Calendar.WEEK_OF_MONTH, value)
+    }
+
 var Calendar.month: Int
     get() = get(Calendar.MONTH)
     set(value) {

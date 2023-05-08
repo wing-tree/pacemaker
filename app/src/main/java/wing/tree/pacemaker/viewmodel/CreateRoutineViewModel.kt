@@ -12,7 +12,7 @@ import wing.tree.pacemaker.domain.service.RoutineService
 import wing.tree.pacemaker.domain.usecase.core.Result
 import wing.tree.pacemaker.model.Instance
 import wing.tree.pacemaker.scheduler.ReminderScheduler
-import wing.tree.pacemaker.ui.states.CreateRoutineUiState
+import wing.tree.pacemaker.ui.state.CreateRoutineUiState
 import javax.inject.Inject
 
 @HiltViewModel
